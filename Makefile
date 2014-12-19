@@ -19,25 +19,25 @@ install:
 ifeq ($(OS),Linux)
 # for Linux
 	cp build/linux/$(PRODUCT) /usr/local/bin/$(PRODUCT)
-	cp config.yml /etc/$(PROUCT).yml
+	cp config.json /etc/$(PROUCT).json
 	cp scripts/$(PRODUCT)_linux /etc/init.d/$(PRODUCT)
 	chmod +x /etc/init.d/$(PRODUCT)
 endif
 ifeq ($(OS),Darwin)
 # for MacOSX
 	cp build/darwin/$(PRODUCT) /usr/local/bin/$(PRODUCT)
-	cp config.yml /etc/$(PRODUCT).yml
+	cp config.json /etc/$(PRODUCT).json
 endif
 
 uninstall:
 ifeq ($(OS),Linux)
 # for Linux
 	rm -f /usr/local/bin/$(PRODUCT)
-	rm -f /etc/$(PRODUCT).yml
+	rm -f /etc/$(PRODUCT).json
 	rm -f /etc/init.d/$(PRODUCT)
 endif
 ifeq ($(OS),Darwin)
 # for MacOSX
 	rm -f /usr/local/bin/$(PRODUCT)
-	rm -f /etc/$(PRODUCT).yml
+	rm -f /etc/$(PRODUCT).json
 endif
