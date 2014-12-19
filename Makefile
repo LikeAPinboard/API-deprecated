@@ -20,7 +20,7 @@ ifeq ($(OS),Linux)
 # for Linux
 	cp build/linux/$(PRODUCT) /usr/local/bin/$(PRODUCT)
 	cp config.json /etc/$(PROUCT).json
-	cp scripts/$(PRODUCT)_linux /etc/init.d/$(PRODUCT)
+	cp scripts/$(PRODUCT) /etc/init.d/$(PRODUCT)
 	chmod +x /etc/init.d/$(PRODUCT)
 endif
 ifeq ($(OS),Darwin)

@@ -18,8 +18,9 @@ RETVAL=0
 
 start() {
     echo -n $"Starting $PROGNAME: "
-    daemon $PROG
+    daemon $PROG -c $(CONF) > /dev/null 2>&1 &
     RETVAL=$?
+    echo
     if [ $RETVAL = 0 ]; then
         touch $LOCKFILE
     fi
@@ -30,6 +31,7 @@ stop() {
     echo -n $"Starting $PROGNAME: "
     killproc $PROG
     RETVAL=$?
+    echo
     if [ $RETVAL = 0 ]; then
         rm -f $LOCKFILE
     fi
