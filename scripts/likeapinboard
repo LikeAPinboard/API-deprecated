@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Like A Pinboard version $version
+#
+# chkconfig: 345 99 01
+# description: Like A Pinboard API Server
+# processname: /usr/local/bin/likeapinboard
+# config: /etc/likeapinkboard.yml
+
+PROGNAME=likeapinboard
+LOCKFILE=/var/lock/subsys/$PROGNAME
+PROG=/usr/local/bin/$PROGNAME
+CONF=/etc/likeapinboad.yaml
+
+./etc/init.d/functions
+
+RETVAL=0
+
+start() {
+    echo -n $"Starting $PROGNAME: "
+    daemon $PROG
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        touch $LOCKFILE
+    fi
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Starting $PROGNAME: "
+    killproc $PROG
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        rm -f $LOCKFILE
+    fi
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $PROG
+        RETVAL=$?
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        exit 1
+esac
+
+exit $RETVAL

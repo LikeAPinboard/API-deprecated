@@ -2,7 +2,7 @@
 host: 127.0.0.1
 
 # listen port
-port: 8888
+port: 8080
 
 # listen path
 path: /
