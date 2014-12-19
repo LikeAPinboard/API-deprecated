@@ -12,7 +12,7 @@ LOCKFILE=/var/lock/subsys/$PROGNAME
 PROG=/usr/local/bin/$PROGNAME
 CONF=/etc/likeapinboad.yaml
 
-./etc/init.d/functions
+. /etc/init.d/functions
 
 RETVAL=0
 

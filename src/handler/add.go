@@ -8,7 +8,7 @@ import (
 )
 
 func Add(d *husky.Dispatcher) {
-	db := husky.NewDb("root:root@tcp(localhost:3306)/pinboard")
+	db := husky.NewDb(GetDSN())
 
 	req := d.Input.GetRequest()
 	req.ParseForm()

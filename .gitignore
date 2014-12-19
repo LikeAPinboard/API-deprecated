@@ -26,4 +26,5 @@ _testmain.go
 src/git*
 src/go*
 pkg/
+config.json
 

@@ -1,0 +1,11 @@
+{
+    "host":"127.0.0.1",
+    "port":8080,
+    "path":"/",
+    "db_user":"databaseuser",
+    "db_pass":"databasepassword",
+    "db_host":"localhost",
+    "db_port":3306,
+    "db_name":"pinboard"
+}
+

@@ -7,7 +7,7 @@ import (
 )
 
 func Accept(d *husky.Dispatcher) {
-	db := husky.NewDb("root:root@tcp(localhost:3306)/pinboard")
+	db := husky.NewDb(GetDSN())
 	req := d.Input.GetRequest()
 	token := req.Header.Get("X-LAP-Token")
 	if token == "" {
