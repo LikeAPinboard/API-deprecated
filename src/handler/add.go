@@ -57,9 +57,8 @@ func Add(d *husky.Dispatcher) {
 	// Insert tags
 	for _, t := range tag {
 		ins := map[string]interface{}{
-			"url_id":  urlId,
-			"name":    t,
-			"user_id": userId,
+			"url_id": urlId,
+			"name":   t,
 		}
 		if _, err := db.Insert("pb_tags", ins); err != nil {
 			db.TransRollback()
