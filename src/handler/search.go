@@ -16,7 +16,7 @@ type SearchResult struct {
 }
 
 func Search(d *husky.Dispatcher) {
-	db := husky.NewDb("root:root@tcp(localhost:3306)/pinboard")
+	db := husky.NewDb(GetDSN())
 	req := d.Input.GetRequest()
 
 	// check token
