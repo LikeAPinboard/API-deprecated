@@ -75,6 +75,7 @@ func Search(d *husky.Dispatcher) {
 	if err != nil {
 		message := fmt.Sprintf("Query Error: %v", err)
 		SendError(d, message)
+		fmt.Printf("%v\n", err)
 		return
 	}
 
