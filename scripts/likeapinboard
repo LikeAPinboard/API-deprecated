@@ -10,7 +10,7 @@
 PROGNAME=likeapinboard
 LOCKFILE=/var/lock/subsys/$PROGNAME
 PROG=/usr/local/bin/$PROGNAME
-CONF=/etc/likeapinboad.yaml
+CONF=/etc/likeapinboard.json
 
 . /etc/init.d/functions
 
