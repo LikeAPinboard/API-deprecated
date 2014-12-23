@@ -54,6 +54,8 @@ func main() {
 	}
 
 	app.AcceptCORS([]string{"X-Requested-With", "X-LAP-Token"})
+	app.Post("/add_rss_category", handler.AddRssCategory)
+	app.Post("/add_rss", handler.AddRss)
 	app.Post("/add", handler.Add)
 	app.Get("/accept", handler.Accept)
 	app.Get("/search", handler.Search)
