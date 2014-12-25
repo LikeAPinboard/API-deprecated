@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 )
 
 type SearchResult struct {
+	Id    int    `json:"id"`
 	Url   string `json:"url"`
 	Title string `json:"title"`
 	Tag   string `json:"tag"`
@@ -55,21 +57,23 @@ func Search(d *husky.Dispatcher) {
 			limit = 10
 		}
 	}
-	q := strings.Split(qs[0], " ")
+
+	// trim space and split search query
+	q := string(bytes.TrimSpace([]byte(qs[0])))
+	qq := strings.Split(q, " ")
 
 	// Search Query
-	query := "SELECT U.url, U.title, T.name FROM pb_tags as T "
+	query := "SELECT U.id, U.url, U.title, T.name FROM pb_tags as T "
 	query += "JOIN pb_urls as U ON ( T.url_id = U.id ) "
 	query += "WHERE U.user_id = ? AND "
 	bind := []interface{}{userId}
 	where := []string{}
 
-	for _, l := range q {
+	for _, l := range qq {
 		where = append(where, "T.name LIKE ?")
-		bind = append(bind, "%"+l+"%")
+		bind = append(bind, "%"+string(l)+"%")
 	}
-	query += strings.Join(where, " AND ")
-	query += " GROUP BY U.id"
+	query += strings.Join(where, " OR ")
 	query += " LIMIT " + fmt.Sprint(limit)
 
 	rows, err := db.Query(query, bind...)
@@ -83,9 +87,11 @@ func Search(d *husky.Dispatcher) {
 	var result []SearchResult
 	for rows.Next() {
 		r := SearchResult{}
-		rows.Scan(&r.Url, &r.Title, &r.Tag)
+		rows.Scan(&r.Id, &r.Url, &r.Title, &r.Tag)
 		result = append(result, r)
 	}
+
+	result = filterResult(result, qq)
 
 	if encode, err := json.Marshal(result); err != nil {
 		SendError(d, fmt.Sprintf("Endode error: %v", err))
@@ -97,4 +103,36 @@ func Search(d *husky.Dispatcher) {
 		d.Output.SetStatus(200)
 		d.Output.Send(encode)
 	}
+}
+
+type FilterStack struct {
+	hit int
+	row SearchResult
+}
+
+func filterResult(result []SearchResult, tags []string) (filtered []SearchResult) {
+	stack := map[int]FilterStack{}
+
+	// count up tags hit
+	for _, row := range result {
+		if tmp, exists := stack[row.Id]; !exists {
+			stack[row.Id] = FilterStack{
+				hit: 1,
+				row: row,
+			}
+		} else {
+			tmp.hit++
+			stack[row.Id] = tmp
+		}
+	}
+
+	// Factory: hit times equals tags count
+	size := len(tags)
+	for _, filter := range stack {
+		if filter.hit == size {
+			filtered = append(filtered, filter.row)
+		}
+	}
+
+	return
 }
