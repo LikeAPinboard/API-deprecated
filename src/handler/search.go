@@ -62,36 +62,48 @@ func Search(d *husky.Dispatcher) {
 	q := string(bytes.TrimSpace([]byte(qs[0])))
 	qq := strings.Split(q, " ")
 
-	// Search Query
-	query := "SELECT U.id, U.url, U.title, T.name FROM pb_tags as T "
-	query += "JOIN pb_urls as U ON ( T.url_id = U.id ) "
-	query += "WHERE U.user_id = ? AND "
-	bind := []interface{}{userId}
-	where := []string{}
-
-	for _, l := range qq {
-		where = append(where, "T.name LIKE ?")
-		bind = append(bind, "%"+string(l)+"%")
-	}
-	query += strings.Join(where, " OR ")
-	query += " LIMIT " + fmt.Sprint(limit)
-
-	rows, err := db.Query(query, bind...)
-	if err != nil {
-		message := fmt.Sprintf("Query Error: %v", err)
-		SendError(d, message)
-		fmt.Printf("%v\n", err)
-		return
+	// filter search query length greater than 1 words
+	tags := []string{}
+	for _, v := range qq {
+		if len([]rune(v)) > 1 {
+			tags = append(tags, v)
+		}
 	}
 
+	// execute search query at least one query
 	var result []SearchResult
-	for rows.Next() {
-		r := SearchResult{}
-		rows.Scan(&r.Id, &r.Url, &r.Title, &r.Tag)
-		result = append(result, r)
-	}
+	if len(tags) > 0 {
+		fmt.Println("Exec search")
+		// Search Query
+		query := "SELECT U.id, U.url, U.title, T.name FROM pb_tags as T "
+		query += "JOIN pb_urls as U ON ( T.url_id = U.id ) "
+		query += "WHERE U.user_id = ? AND "
+		bind := []interface{}{userId}
+		where := []string{}
 
-	result = filterResult(result, qq)
+		for _, q := range tags {
+			where = append(where, "T.name LIKE ?")
+			bind = append(bind, "%"+string(q)+"%")
+		}
+		query += strings.Join(where, " OR ")
+		query += " LIMIT " + fmt.Sprint(limit)
+
+		rows, err := db.Query(query, bind...)
+		if err != nil {
+			message := fmt.Sprintf("Query Error: %v", err)
+			SendError(d, message)
+			fmt.Printf("%v\n", err)
+			return
+		}
+
+		for rows.Next() {
+			r := SearchResult{}
+			rows.Scan(&r.Id, &r.Url, &r.Title, &r.Tag)
+			result = append(result, r)
+		}
+
+		result = filterResult(result, qq)
+	}
 
 	if encode, err := json.Marshal(result); err != nil {
 		SendError(d, fmt.Sprintf("Endode error: %v", err))
