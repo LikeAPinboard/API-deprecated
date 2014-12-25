@@ -68,7 +68,7 @@ func Search(d *husky.Dispatcher) {
 		where = append(where, "T.name LIKE ?")
 		bind = append(bind, "%"+l+"%")
 	}
-	query += strings.Join(where, " OR ")
+	query += strings.Join(where, " AND ")
 	query += " GROUP BY U.id"
 	query += " LIMIT " + fmt.Sprint(limit)
 
