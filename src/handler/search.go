@@ -69,6 +69,7 @@ func Search(d *husky.Dispatcher) {
 		bind = append(bind, "%"+l+"%")
 	}
 	query += strings.Join(where, " OR ")
+	query += " GROUP BY U.id"
 	query += " LIMIT " + fmt.Sprint(limit)
 
 	rows, err := db.Query(query, bind...)
