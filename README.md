@@ -1,4 +1,4 @@
-API
+[Deprecated]API
 ===
 
 Client API Handler Server
